@@ -42,7 +42,7 @@
     "source-map": "^0.7.6"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.3.13",
     "@rsbuild/core": "1.7.2",
     "@rslib/core": "^0.19.4",
     "@rspack/cli": "^1.7.4",
