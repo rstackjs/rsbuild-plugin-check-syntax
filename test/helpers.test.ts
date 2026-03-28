@@ -64,25 +64,12 @@ test('#makeCodeFrame = should make code frame correctly', () => {
     'var c = 3;',
   ];
 
-  expect(makeCodeFrame(lines, 0)).toEqual(`
-[33m   > 1 | const a = 1;[39m
-[90m     2 | [39m
-[90m     3 | var b = 2;[39m
-[90m     4 | [39m`);
-  expect(makeCodeFrame(lines, 4)).toEqual(`
-[90m     2 | [39m
-[90m     3 | var b = 2;[39m
-[90m     4 | [39m
-[33m   > 5 | console.log(() => {[39m
-[90m     6 |   return a + b;[39m
-[90m     7 | });[39m
-[90m     8 | [39m`);
+  expect(makeCodeFrame(lines, 0)).toMatchSnapshot();
+  expect(makeCodeFrame(lines, 4)).toMatchSnapshot();
 });
 
 test('#displayCodePointer - should display code pointer correctly', () => {
   const code =
     '(self.webpackChunktmp=self.webpackChunktmp||[]).push([[179],{530:()=>{console.log(1);let e=1;e="2"}},e=>{var l;l=530,e(e.s=l)}]);';
-  expect(`\n  code:    ${displayCodePointer(code, 66)}`).toEqual(`
-  code:    .webpackChunktmp||[]).push([[179],{530:()=>{console.log(1);let e=1;e="2"}},e=>{v
-[33m                                                  ^[39m`);
+  expect(`\n  code:    ${displayCodePointer(code, 66)}`).toMatchSnapshot();
 });

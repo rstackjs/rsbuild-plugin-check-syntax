@@ -1,0 +1,26 @@
+// Rstest Snapshot v1
+
+exports[`#displayCodePointer - should display code pointer correctly 1`] = `
+"
+  code:    .webpackChunktmp||[]).push([[179],{530:()=>{console.log(1);let e=1;e="2"}},e=>{v
+                                                  ^"
+`;
+
+exports[`#makeCodeFrame = should make code frame correctly 1`] = `
+"
+   > 1 | const a = 1;
+     2 | 
+     3 | var b = 2;
+     4 | "
+`;
+
+exports[`#makeCodeFrame = should make code frame correctly 2`] = `
+"
+     2 | 
+     3 | var b = 2;
+     4 | 
+   > 5 | console.log(() => {
+     6 |   return a + b;
+     7 | });
+     8 | "
+`;
