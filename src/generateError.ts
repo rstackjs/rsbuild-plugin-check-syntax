@@ -185,7 +185,7 @@ async function tryGenerateErrorFromSourceMap({
         column: err.loc.column,
       },
     });
-  } catch (e) {
+  } catch {
     return null;
   }
 }

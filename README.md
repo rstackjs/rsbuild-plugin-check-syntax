@@ -26,7 +26,7 @@ Add plugin to your Rsbuild config:
 
 ```ts
 // rsbuild.config.ts
-import { pluginCheckSyntax } from "@rsbuild/plugin-check-syntax";
+import { pluginCheckSyntax } from '@rsbuild/plugin-check-syntax';
 
 export default {
   plugins: [pluginCheckSyntax()],
@@ -37,12 +37,12 @@ This plugin is compatible with both Rsbuild and Rspack. If you are using Rspack 
 
 ```ts
 // rspack.config.mjs
-import { defineConfig } from "@rspack/cli";
-import { CheckSyntaxRspackPlugin } from "@rsbuild/plugin-check-syntax";
+import { defineConfig } from '@rspack/cli';
+import { CheckSyntaxRspackPlugin } from '@rsbuild/plugin-check-syntax';
 
 export default defineConfig({
-  mode: process.env.NODE_ENV === "production" ? "production" : "development",
-  devtool: "source-map",
+  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+  devtool: 'source-map',
   plugins: [
     new CheckSyntaxRspackPlugin({
       ecmaVersion: 2015,
@@ -91,9 +91,9 @@ export default {
   output: {
     sourceMap: {
       js:
-        process.env.NODE_ENV === "production"
-          ? "source-map"
-          : "cheap-module-source-map",
+        process.env.NODE_ENV === 'production'
+          ? 'source-map'
+          : 'cheap-module-source-map',
     },
   },
 };
@@ -135,7 +135,7 @@ For example, if the target browsers to be compatible with in the project are Chr
 
 ```ts
 pluginCheckSyntax({
-  targets: ["chrome >= 53"],
+  targets: ['chrome >= 53'],
 });
 ```
 
@@ -191,17 +191,17 @@ Or pass in a function to match the paths of source files. Files that return true
 
 ```ts
 pluginCheckSyntax({
-  exclude: (filepath) => filepath.includes("node_modules/foo"),
+  exclude: (filepath) => filepath.includes('node_modules/foo'),
 });
 ```
 
 Or passing an absolute path to match the paths of source files. Files that match the absolute path will be ignored:
 
 ```ts
-import path from "node:path";
+import path from 'node:path';
 
 pluginCheckSyntax({
-  exclude: path.posix.join(__dirname, "node_modules/foo"),
+  exclude: path.posix.join(__dirname, 'node_modules/foo'),
 });
 ```
 
@@ -266,7 +266,7 @@ For example, to ignore the reason and code displayed in the terminal.
 
 ```ts
 pluginCheckSyntax({
-  excludeErrorLogs: ["reason", "code"],
+  excludeErrorLogs: ['reason', 'code'],
 });
 ```
 
