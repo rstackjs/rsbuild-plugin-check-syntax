@@ -36,7 +36,7 @@
   "devDependencies": {
     "@rsbuild/core": "2.0.9",
     "@rslib/core": "^0.22.0",
-    "@rslint/core": "^0.5.3",
+    "@rslint/core": "^0.6.1",
     "@rspack/cli": "^2.0.5",
     "@rspack/core": "^2.0.5",
     "@rstest/core": "^0.10.3",
