@@ -30,10 +30,10 @@ test('#getHtmlScripts - should extract inline scripts correctly', async () => {
   ).toEqual(`console.log('Inline script 1');
 console.log('Inline script 2');
 console.log('Inline script 3');
-var message = \"This is a test script.\";
+var message = "This is a test script.";
         console.log(message);
-        alert(\"This is an alert.
-It has a line break.\");`);
+        alert("This is an alert.
+It has a line break.");`);
 });
 
 test('#getHtmlScripts - should not extract external scripts and JSON scripts', async () => {
