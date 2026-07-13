@@ -1,10 +1,11 @@
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRsbuild, loadConfig, mergeRsbuildConfig } from '@rsbuild/core';
+import { proxyConsole } from '@rstackjs/test-utils';
 import { expect, test } from '@rstest/core';
 import stripAnsi from 'strip-ansi';
 import { pluginCheckSyntax } from '../../src';
-import { normalizeToPosixPath, proxyConsole } from '../helper';
+import { normalizeToPosixPath } from '../helper';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
