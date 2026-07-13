@@ -43,6 +43,7 @@
     "@rslint/core": "^0.6.4",
     "@rspack/cli": "^2.1.2",
     "@rspack/core": "^2.1.2",
+    "@rstackjs/test-utils": "^0.2.0",
     "@rstest/core": "^0.10.6",
     "@types/node": "^24.13.2",
     "prettier": "^3.9.4",
