@@ -51,15 +51,13 @@ test('should throw error when exist syntax errors', async () => {
   expect(
     logs.find(
       (log) =>
-        log.includes('source:') &&
-        toPosixPath(log).includes('src/test.js'),
+        log.includes('source:') && toPosixPath(log).includes('src/test.js'),
     ),
   ).toBeTruthy();
   expect(
     logs.find(
       (log) =>
-        log.includes('output:') &&
-        toPosixPath(log).includes('/dist/main'),
+        log.includes('output:') && toPosixPath(log).includes('/dist/main'),
     ),
   ).toBeTruthy();
   expect(logs.find((log) => log.includes('reason:'))).toBeTruthy();

@@ -32,8 +32,7 @@ test('should throw error when using optional chaining and target is es6 browsers
   expect(
     logs.find(
       (log) =>
-        log.includes('source:') &&
-        toPosixPath(log).includes('src/test.js'),
+        log.includes('source:') && toPosixPath(log).includes('src/test.js'),
     ),
   ).toBeTruthy();
   expect(
@@ -78,8 +77,7 @@ test('should throw error when using optional chaining and target is fully suppor
   expect(
     logs.find(
       (log) =>
-        log.includes('source:') &&
-        toPosixPath(log).includes('src/test.js'),
+        log.includes('source:') && toPosixPath(log).includes('src/test.js'),
     ),
   ).toBeTruthy();
   expect(
