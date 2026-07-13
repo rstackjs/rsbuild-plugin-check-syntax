@@ -1,10 +1,10 @@
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRsbuild, loadConfig, mergeRsbuildConfig } from '@rsbuild/core';
+import { proxyConsole, toPosixPath } from '@rstackjs/test-utils';
 import { expect, test } from '@rstest/core';
 import stripAnsi from 'strip-ansi';
 import { pluginCheckSyntax } from '../../src';
-import { normalizeToPosixPath, proxyConsole } from '../helper';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -37,15 +37,14 @@ test('should throw error when exist syntax errors', async () => {
   expect(
     logs.find(
       (log) =>
-        log.includes('source:') &&
-        normalizeToPosixPath(log).includes('src/test.js'),
+        log.includes('source:') && toPosixPath(log).includes('src/test.js'),
     ),
   ).toBeTruthy();
   expect(
     logs.find(
       (log) =>
         log.includes('output:') &&
-        normalizeToPosixPath(log).includes('/dist/static/js/index'),
+        toPosixPath(log).includes('/dist/static/js/index'),
     ),
   ).toBeTruthy();
   expect(logs.find((log) => log.includes('reason:'))).toBeTruthy();
@@ -83,15 +82,14 @@ test('should check assets with query correctly', async () => {
   expect(
     logs.find(
       (log) =>
-        log.includes('source:') &&
-        normalizeToPosixPath(log).includes('src/test.js'),
+        log.includes('source:') && toPosixPath(log).includes('src/test.js'),
     ),
   ).toBeTruthy();
   expect(
     logs.find(
       (log) =>
         log.includes('output:') &&
-        normalizeToPosixPath(log).includes('/dist/static/js/index'),
+        toPosixPath(log).includes('/dist/static/js/index'),
     ),
   ).toBeTruthy();
   expect(logs.find((log) => log.includes('reason:'))).toBeTruthy();
