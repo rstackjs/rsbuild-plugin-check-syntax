@@ -1,11 +1,10 @@
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { rspack } from '@rspack/core';
-import { proxyConsole } from '@rstackjs/test-utils';
+import { proxyConsole, toPosixPath } from '@rstackjs/test-utils';
 import { expect, test } from '@rstest/core';
 import stripAnsi from 'strip-ansi';
 import { CheckSyntaxRspackPlugin } from '../../dist';
-import { normalizeToPosixPath } from '../helper';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -53,14 +52,14 @@ test('should throw error when exist syntax errors', async () => {
     logs.find(
       (log) =>
         log.includes('source:') &&
-        normalizeToPosixPath(log).includes('src/test.js'),
+        toPosixPath(log).includes('src/test.js'),
     ),
   ).toBeTruthy();
   expect(
     logs.find(
       (log) =>
         log.includes('output:') &&
-        normalizeToPosixPath(log).includes('/dist/main'),
+        toPosixPath(log).includes('/dist/main'),
     ),
   ).toBeTruthy();
   expect(logs.find((log) => log.includes('reason:'))).toBeTruthy();

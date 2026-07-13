@@ -1,10 +1,9 @@
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRsbuild, loadConfig } from '@rsbuild/core';
-import { proxyConsole } from '@rstackjs/test-utils';
+import { proxyConsole, toPosixPath } from '@rstackjs/test-utils';
 import { expect, test } from '@rstest/core';
 import { pluginCheckSyntax } from '../../dist';
-import { normalizeToPosixPath } from '../helper';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -34,14 +33,14 @@ test('should throw error when using optional chaining and target is es6 browsers
     logs.find(
       (log) =>
         log.includes('source:') &&
-        normalizeToPosixPath(log).includes('src/test.js'),
+        toPosixPath(log).includes('src/test.js'),
     ),
   ).toBeTruthy();
   expect(
     logs.find(
       (log) =>
         log.includes('output:') &&
-        normalizeToPosixPath(log).includes('/dist/static/js/index'),
+        toPosixPath(log).includes('/dist/static/js/index'),
     ),
   ).toBeTruthy();
   expect(
@@ -80,14 +79,14 @@ test('should throw error when using optional chaining and target is fully suppor
     logs.find(
       (log) =>
         log.includes('source:') &&
-        normalizeToPosixPath(log).includes('src/test.js'),
+        toPosixPath(log).includes('src/test.js'),
     ),
   ).toBeTruthy();
   expect(
     logs.find(
       (log) =>
         log.includes('output:') &&
-        normalizeToPosixPath(log).includes('/dist/static/js/index'),
+        toPosixPath(log).includes('/dist/static/js/index'),
     ),
   ).toBeTruthy();
   expect(
