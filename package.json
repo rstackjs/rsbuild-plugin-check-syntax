@@ -41,7 +41,7 @@
     "@rsbuild/core": "2.2.6",
     "@rspack/cli": "^2.2.4",
     "@rspack/core": "^2.2.4",
-    "@rstackjs/test-utils": "^0.2.0",
+    "@rstackjs/test-utils": "^1.0.0",
     "@types/node": "^24.13.4",
     "rslog": "^2.3.0",
     "rstack": "^0.7.4",
