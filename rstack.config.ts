@@ -6,13 +6,6 @@ define.lib({
   dts: true,
 });
 
-define.test({
-  env: {
-    // Keep `styleText` output plain so error snapshots stay stable.
-    FORCE_COLOR: '0',
-  },
-});
-
 define.fmt({
   singleQuote: true,
 });
