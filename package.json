@@ -32,19 +32,19 @@
     "test": "rs test"
   },
   "dependencies": {
-    "acorn": "^8.18.0",
+    "acorn": "^8.19.0",
     "browserslist-to-es-version": "^1.4.2",
     "htmlparser2": "12.0.0",
     "source-map": "^0.8.0"
   },
   "devDependencies": {
-    "@rsbuild/core": "2.2.6",
-    "@rspack/cli": "^2.2.4",
-    "@rspack/core": "^2.2.4",
+    "@rsbuild/core": "2.2.13",
+    "@rspack/cli": "^2.2.9",
+    "@rspack/core": "^2.2.9",
     "@rstackjs/test-utils": "^1.0.0",
-    "@types/node": "^24.13.4",
+    "@types/node": "^24.19.2",
     "rslog": "^2.3.0",
-    "rstack": "^0.8.0",
+    "rstack": "^0.8.3",
     "strip-ansi": "^7.2.0",
     "typescript": "7.0.2"
   },
@@ -56,7 +56,7 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@11.27.0",
+  "packageManager": "pnpm@11.28.5",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
