@@ -1,6 +1,6 @@
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 import { expect, test } from 'rstack/test';
 import { CheckSyntax } from '../src/checkSyntax';
 import type { EcmaVersion, SourceType } from '../src/types';
@@ -127,7 +127,7 @@ test('module version conflict uses the output location and existing filters', as
 
     const script = new CheckSyntax({ ecmaVersion: 2015, rootPath: dir });
     await script.check(filepath, 'export const value = 1;');
-    expect(script.errors[0].output?.path).toBe('/bundle.js');
+    expect(script.errors[0].output?.path).toBe(`${sep}bundle.js`);
 
     const module = new CheckSyntax({
       ecmaVersion: 5,
