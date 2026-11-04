@@ -8,6 +8,30 @@ import { pluginCheckSyntax } from '../../src';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+test('passes sourceType through the Rsbuild plugin', async () => {
+  const { logs, restore } = proxyConsole();
+  try {
+    const rsbuild = await createRsbuild({
+      cwd: __dirname,
+      rsbuildConfig: {
+        ...(await loadConfig({ cwd: __dirname })).content,
+        plugins: [pluginCheckSyntax({ ecmaVersion: 5, sourceType: 'module' })],
+      },
+    });
+
+    await expect(rsbuild.build()).rejects.toThrowError(
+      '[@rsbuild/plugin-check-syntax]',
+    );
+    expect(
+      logs.some((log) =>
+        log.includes('Module sourceType requires ecmaVersion >= 2015'),
+      ),
+    ).toBeTruthy();
+  } finally {
+    restore();
+  }
+});
+
 test('should throw error when exist syntax errors', async () => {
   const { logs, restore } = proxyConsole();
 

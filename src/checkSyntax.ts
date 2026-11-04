@@ -9,6 +9,8 @@ import type {
   CheckSyntaxExclude,
   ECMASyntaxError,
   EcmaVersion,
+  ParseContext,
+  SourceType,
   SyntaxErrorKey,
 } from './types.js';
 import { isExcluded } from './utils.js';
@@ -27,6 +29,8 @@ export class CheckSyntax {
   errors: ECMASyntaxError[] = [];
 
   ecmaVersion: EcmaVersion;
+
+  sourceType?: SourceType;
 
   targets?: string[];
 
@@ -54,6 +58,7 @@ export class CheckSyntax {
 
     this.targets = targets;
     this.ecmaVersion = ecmaVersion || browserslistToESVersion(targets);
+    this.sourceType = options.sourceType;
 
     this.exclude = options.exclude;
     this.excludeErrorMessage = options.excludeErrorMessage;
@@ -62,10 +67,10 @@ export class CheckSyntax {
     this.excludeErrorLogs = options.excludeErrorLogs || [];
   }
 
-  async check(filepath: string, code?: string) {
+  async check(filepath: string, code?: string, context?: ParseContext) {
     // If the code is provided, no need to read file.
-    if (code) {
-      return await this.tryParse(filepath, code);
+    if (code !== undefined) {
+      return await this.tryParse(filepath, code, context);
     }
 
     if (HTML_REGEX.test(filepath)) {
@@ -73,7 +78,7 @@ export class CheckSyntax {
       await Promise.all(
         htmlScripts.map(async (script) => {
           if (!isExcluded(filepath, this.exclude)) {
-            await this.tryParse(filepath, script);
+            await this.tryParse(filepath, script, { sourceType: 'script' });
           }
         }),
       );
@@ -81,13 +86,26 @@ export class CheckSyntax {
 
     if (JS_REGEX.test(filepath)) {
       const jsScript = await fs.promises.readFile(filepath, 'utf-8');
-      await this.tryParse(filepath, jsScript);
+      await this.tryParse(filepath, jsScript, context);
     }
   }
 
-  async tryParse(filepath: string, code: string) {
+  async tryParse(filepath: string, code: string, context?: ParseContext) {
+    const sourceType = context?.sourceType ?? this.sourceType ?? 'script';
+    const incompatibleModuleVersion =
+      sourceType === 'module' &&
+      typeof this.ecmaVersion === 'number' &&
+      this.ecmaVersion < 6;
+
     try {
-      parse(code, { ecmaVersion: this.ecmaVersion });
+      if (incompatibleModuleVersion) {
+        throw {
+          message: 'Module sourceType requires ecmaVersion >= 2015',
+          pos: 0,
+          loc: { line: 1, column: 0 },
+        } satisfies AcornParseError;
+      }
+      parse(code, { ecmaVersion: this.ecmaVersion, sourceType });
     } catch (_: unknown) {
       const err = _ as AcornParseError;
 
@@ -98,6 +116,7 @@ export class CheckSyntax {
         exclude: this.exclude,
         excludeErrorMessage: this.excludeErrorMessage,
         rootPath: this.rootPath,
+        useSourceMap: !incompatibleModuleVersion,
       });
 
       if (error) {

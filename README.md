@@ -164,6 +164,33 @@ pluginCheckSyntax({
 
 At this time, the build artifacts can include all syntax supported by ES2020, such as optional chaining.
 
+### sourceType
+
+- **Type:** `'script' | 'module'`
+- **Default:** `'script'`
+
+Set `sourceType: 'module'` when the JavaScript output is an ES module. The syntax check uses both `sourceType` and `ecmaVersion`: module syntax requires ES2015 or newer, and modules are always parsed in strict mode.
+
+```ts
+pluginCheckSyntax({
+  ecmaVersion: 2020,
+  sourceType: 'module',
+});
+```
+
+The same option works with `CheckSyntaxRspackPlugin`. When using `CheckSyntax` directly, a single call can override the constructor default:
+
+```ts
+import { CheckSyntax } from '@rsbuild/plugin-check-syntax';
+
+const checker = new CheckSyntax({ ecmaVersion: 2020 });
+await checker.check('module.js', 'export const value = 1;', {
+  sourceType: 'module',
+});
+```
+
+The plugin does not yet infer the mode from `.mjs`/`.cjs` extensions or Rspack output settings. Set it explicitly for module outputs. HTML inline scripts retain their existing behavior: only classic scripts are checked; `<script type="module">` is not checked yet. Setting plugin-level `sourceType` does not change how HTML scripts are parsed.
+
 ### exclude
 
 - **Type:**

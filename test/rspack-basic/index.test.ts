@@ -8,6 +8,39 @@ import { CheckSyntaxRspackPlugin } from '../../dist';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+test('passes sourceType through the Rspack plugin', async () => {
+  const { logs, restore } = proxyConsole();
+  const compiler = rspack({
+    context: __dirname,
+    mode: 'production',
+    plugins: [
+      new CheckSyntaxRspackPlugin({ ecmaVersion: 5, sourceType: 'module' }),
+    ],
+  });
+
+  try {
+    await expect(
+      new Promise((resolve, reject) => {
+        compiler.run((err, stats) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(stats);
+          }
+        });
+      }),
+    ).rejects.toThrowError('[@rsbuild/plugin-check-syntax]');
+    expect(
+      logs.some((log) =>
+        log.includes('Module sourceType requires ecmaVersion >= 2015'),
+      ),
+    ).toBeTruthy();
+  } finally {
+    restore();
+    await new Promise<void>((resolve) => compiler.close(() => resolve()));
+  }
+});
+
 test('should throw error when exist syntax errors', async () => {
   const { logs, restore } = proxyConsole();
 
