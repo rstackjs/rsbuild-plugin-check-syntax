@@ -10,7 +10,6 @@ import type {
   ECMASyntaxError,
   EcmaVersion,
   ParseContext,
-  SourceType,
   SyntaxErrorKey,
 } from './types.js';
 import { isExcluded } from './utils.js';
@@ -29,8 +28,6 @@ export class CheckSyntax {
   errors: ECMASyntaxError[] = [];
 
   ecmaVersion: EcmaVersion;
-
-  sourceType?: SourceType;
 
   targets?: string[];
 
@@ -58,8 +55,6 @@ export class CheckSyntax {
 
     this.targets = targets;
     this.ecmaVersion = ecmaVersion || browserslistToESVersion(targets);
-    this.sourceType = options.sourceType;
-
     this.exclude = options.exclude;
     this.excludeErrorMessage = options.excludeErrorMessage;
     this.excludeOutput = options.excludeOutput;
@@ -91,7 +86,7 @@ export class CheckSyntax {
   }
 
   async tryParse(filepath: string, code: string, context?: ParseContext) {
-    const sourceType = context?.sourceType ?? this.sourceType ?? 'script';
+    const sourceType = context?.sourceType ?? 'script';
     const incompatibleModuleVersion =
       sourceType === 'module' &&
       typeof this.ecmaVersion === 'number' &&

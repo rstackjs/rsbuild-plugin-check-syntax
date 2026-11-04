@@ -10,8 +10,8 @@ async function errorsFor(
   ecmaVersion: EcmaVersion,
   sourceType?: SourceType,
 ) {
-  const checker = new CheckSyntax({ ecmaVersion, sourceType });
-  await checker.check('bundle.js', code);
+  const checker = new CheckSyntax({ ecmaVersion });
+  await checker.check('bundle.js', code, { sourceType });
   return checker.errors;
 }
 
@@ -65,8 +65,8 @@ test('module requires ES2015 or newer, including for ES5-only code', async () =>
   }
 });
 
-test('per-check context overrides the default without changing later calls', async () => {
-  const checker = new CheckSyntax({ ecmaVersion: 2020, sourceType: 'module' });
+test('per-check context does not change later calls', async () => {
+  const checker = new CheckSyntax({ ecmaVersion: 2020 });
   const code = 'export const value = 1;';
 
   await Promise.all([
@@ -77,7 +77,8 @@ test('per-check context overrides the default without changing later calls', asy
   expect(checker.errors[0].source.absolutePath).toBe('script.js');
 
   await checker.tryParse('another-module.js', code);
-  expect(checker.errors).toHaveLength(1);
+  expect(checker.errors).toHaveLength(2);
+  expect(checker.errors[1].source.absolutePath).toBe('another-module.js');
 });
 
 test('provided empty code does not read from disk', async () => {
@@ -98,15 +99,12 @@ test('file reads use per-check context while HTML scripts remain classic', async
       '<script>function value(a, a) { return a; }</script>',
     );
 
-    const checker = new CheckSyntax({
-      ecmaVersion: 2020,
-      sourceType: 'module',
-    });
-    await checker.check(jsFile, undefined, { sourceType: 'script' });
-    expect(checker.errors).toHaveLength(1);
+    const checker = new CheckSyntax({ ecmaVersion: 2020 });
+    await checker.check(jsFile, undefined, { sourceType: 'module' });
+    expect(checker.errors).toHaveLength(0);
 
-    await checker.check(htmlFile);
-    expect(checker.errors).toHaveLength(1);
+    await checker.check(htmlFile, undefined, { sourceType: 'module' });
+    expect(checker.errors).toHaveLength(0);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
@@ -133,19 +131,19 @@ test('module version conflict uses the output location and existing filters', as
 
     const module = new CheckSyntax({
       ecmaVersion: 5,
-      sourceType: 'module',
       rootPath: dir,
     });
-    await module.check(filepath, 'var value = 1;');
+    await module.check(filepath, 'var value = 1;', { sourceType: 'module' });
     expect(module.errors[0].output).toBeUndefined();
     expect(module.errors[0].source.absolutePath).toBe(filepath);
 
     const filtered = new CheckSyntax({
       ecmaVersion: 5,
-      sourceType: 'module',
       excludeErrorMessage: /Module sourceType requires ecmaVersion/,
     });
-    await filtered.check(filepath, 'var value = 1;');
+    await filtered.check(filepath, 'var value = 1;', {
+      sourceType: 'module',
+    });
     expect(filtered.errors).toHaveLength(0);
   } finally {
     await rm(dir, { recursive: true, force: true });

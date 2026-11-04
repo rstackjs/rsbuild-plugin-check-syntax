@@ -43,8 +43,6 @@ export type CheckSyntaxOptions = {
    * The priority of `ecmaVersion` is higher than `targets`.
    */
   ecmaVersion?: EcmaVersion;
-  /** How to interpret JavaScript output. Defaults to `script`. */
-  sourceType?: SourceType;
 };
 
 export interface Location {

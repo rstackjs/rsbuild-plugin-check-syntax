@@ -8,14 +8,17 @@ import { pluginCheckSyntax } from '../../src';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-test('passes sourceType through the Rsbuild plugin', async () => {
+test('detects module output from the Rsbuild config', async () => {
   const { logs, restore } = proxyConsole();
   try {
     const rsbuild = await createRsbuild({
       cwd: __dirname,
       rsbuildConfig: {
         ...(await loadConfig({ cwd: __dirname })).content,
-        plugins: [pluginCheckSyntax({ ecmaVersion: 5, sourceType: 'module' })],
+        output: {
+          module: true,
+        },
+        plugins: [pluginCheckSyntax({ ecmaVersion: 5 })],
       },
     });
 

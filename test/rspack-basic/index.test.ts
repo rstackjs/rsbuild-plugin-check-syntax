@@ -8,14 +8,14 @@ import { CheckSyntaxRspackPlugin } from '../../dist';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-test('passes sourceType through the Rspack plugin', async () => {
+test('detects module output from the Rspack config', async () => {
   const { logs, restore } = proxyConsole();
   const compiler = rspack({
     context: __dirname,
     mode: 'production',
-    plugins: [
-      new CheckSyntaxRspackPlugin({ ecmaVersion: 5, sourceType: 'module' }),
-    ],
+    output: { module: true },
+    experiments: { outputModule: true },
+    plugins: [new CheckSyntaxRspackPlugin({ ecmaVersion: 5 })],
   });
 
   try {

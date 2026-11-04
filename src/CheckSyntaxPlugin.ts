@@ -20,6 +20,9 @@ export class CheckSyntaxRspackPlugin extends CheckSyntax {
       CheckSyntaxRspackPlugin.name,
       async (compilation: Compilation) => {
         const outputPath = compilation.outputOptions.path || 'dist';
+        const sourceType = compilation.outputOptions.module
+          ? 'module'
+          : 'script';
 
         // not support compilation.emittedAssets in Rspack
         const emittedAssets = compilation
@@ -40,7 +43,7 @@ export class CheckSyntaxRspackPlugin extends CheckSyntax {
         );
         await Promise.all(
           files.map(async (file) => {
-            await this.check(file);
+            await this.check(file, undefined, { sourceType });
           }),
         );
 
