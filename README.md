@@ -166,7 +166,7 @@ At this time, the build artifacts can include all syntax supported by ES2020, su
 
 ### Module output
 
-When Rspack's `output.module` is `true`, the plugin automatically parses JavaScript output as an ES module. This works with both `pluginCheckSyntax` and `CheckSyntaxRspackPlugin`; no additional plugin option is needed. Otherwise, JavaScript output is parsed as a classic script. The check still enforces `ecmaVersion`; module output requires ES2015 or newer and always uses strict mode.
+When Rspack's `output.module` is `true`, the plugin automatically parses JavaScript chunk files as ES modules. This works with both `pluginCheckSyntax` and `CheckSyntaxRspackPlugin`; no additional plugin option is needed. Other JavaScript assets, including copied files, are parsed as classic scripts. Modules always use strict mode. Following Acorn's behavior, static `import`/`export` declarations are accepted even with `ecmaVersion` below ES2015; other syntax features remain subject to the configured version.
 
 When using `CheckSyntax` directly, there is no compilation configuration to inspect. Pass the mode for a module resource in the per-check context:
 

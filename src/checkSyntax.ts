@@ -87,20 +87,7 @@ export class CheckSyntax {
 
   async tryParse(filepath: string, code: string, context?: ParseContext) {
     const sourceType = context?.sourceType ?? 'script';
-    // Acorn can accept module declarations below ES2015; 6 is its ES2015 alias.
-    const incompatibleModuleVersion =
-      sourceType === 'module' &&
-      typeof this.ecmaVersion === 'number' &&
-      this.ecmaVersion < 6;
-
     try {
-      if (incompatibleModuleVersion) {
-        throw {
-          message: 'Module sourceType requires ecmaVersion >= 2015',
-          pos: 0,
-          loc: { line: 1, column: 0 },
-        } satisfies AcornParseError;
-      }
       parse(code, { ecmaVersion: this.ecmaVersion, sourceType });
     } catch (_: unknown) {
       const err = _ as AcornParseError;
@@ -112,8 +99,6 @@ export class CheckSyntax {
         exclude: this.exclude,
         excludeErrorMessage: this.excludeErrorMessage,
         rootPath: this.rootPath,
-        // Version conflicts use a placeholder location, which must not map to unrelated source code.
-        useSourceMap: !incompatibleModuleVersion,
       });
 
       if (error) {

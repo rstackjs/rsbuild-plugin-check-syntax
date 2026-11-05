@@ -25,7 +25,6 @@ export async function generateError({
   rootPath,
   exclude,
   excludeErrorMessage,
-  useSourceMap = true,
 }: {
   err: AcornParseError;
   code: string;
@@ -33,18 +32,15 @@ export async function generateError({
   rootPath: string;
   exclude?: CheckSyntaxExclude;
   excludeErrorMessage?: CheckSyntaxExclude;
-  useSourceMap?: boolean;
 }): Promise<ECMASyntaxError | null> {
   const relativeOutputPath = filepath.replace(rootPath, '');
-  let error = useSourceMap
-    ? await tryGenerateErrorFromSourceMap({
-        err,
-        code,
-        rootPath,
-        outputFilepath: filepath,
-        relativeOutputPath,
-      })
-    : null;
+  let error = await tryGenerateErrorFromSourceMap({
+    err,
+    code,
+    rootPath,
+    outputFilepath: filepath,
+    relativeOutputPath,
+  });
 
   if (!error) {
     error = new ECMASyntaxError(err.message, {

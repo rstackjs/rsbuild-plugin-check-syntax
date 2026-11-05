@@ -47,22 +47,20 @@ test('module syntax still respects ECMAScript feature versions', async () => {
   ).toBe(1);
 });
 
-test('module requires ES2015 or newer, including for ES5-only code', async () => {
-  for (const ecmaVersion of [3, 5] as const) {
-    const errors = await errorsFor('var value = 1;', ecmaVersion, 'module');
-    expect(errors).toHaveLength(1);
-    expect(errors[0].message).toContain(
-      'Module sourceType requires ecmaVersion >= 2015',
-    );
-    expect(errors[0].source.line).toBe(1);
-    expect(errors[0].source.column).toBe(0);
+test('module declarations follow Acorn version semantics', async () => {
+  for (const ecmaVersion of [3, 5, 6, 2015, 'latest'] as const) {
+    for (const code of [
+      'var value = 1;',
+      'export var value = 1;',
+      "import value from 'pkg';",
+    ]) {
+      expect(await errorsFor(code, ecmaVersion, 'module')).toHaveLength(0);
+    }
   }
 
-  for (const ecmaVersion of [6, 2015, 'latest'] as const) {
-    expect(
-      (await errorsFor('export var value = 1;', ecmaVersion, 'module')).length,
-    ).toBe(0);
-  }
+  expect(await errorsFor('export const value = 1;', 5, 'module')).toHaveLength(
+    1,
+  );
 });
 
 test('per-check context does not change later calls', async () => {
@@ -104,14 +102,14 @@ test('file reads use per-check context while HTML scripts remain classic', async
   }
 });
 
-test('module version conflict uses the output location and existing filters', async () => {
+test('module parse errors retain source maps and existing filters', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'check-syntax-'));
   const filepath = join(dir, 'bundle.js');
   const sourceMap = {
     version: 3,
     file: 'bundle.js',
     sources: ['original.js'],
-    sourcesContent: ['export const value = 1;'],
+    sourcesContent: ['export const value = input?.value;'],
     names: [],
     mappings: 'AAAA',
   };
@@ -119,23 +117,23 @@ test('module version conflict uses the output location and existing filters', as
   try {
     await writeFile(`${filepath}.map`, JSON.stringify(sourceMap));
 
-    const script = new CheckSyntax({ ecmaVersion: 2015, rootPath: dir });
-    await script.check(filepath, 'export const value = 1;');
-    expect(script.errors[0].output?.path).toBe(`${sep}bundle.js`);
-
-    const module = new CheckSyntax({
-      ecmaVersion: 5,
+    const checker = new CheckSyntax({
+      ecmaVersion: 2019,
       rootPath: dir,
     });
-    await module.check(filepath, 'var value = 1;', { sourceType: 'module' });
-    expect(module.errors[0].output).toBeUndefined();
-    expect(module.errors[0].source.absolutePath).toBe(filepath);
+    const code = 'export const value = input?.value;';
+    await checker.check(filepath, code, { sourceType: 'module' });
+    expect(checker.errors).toHaveLength(1);
+    expect(checker.errors[0].output?.path).toBe(`${sep}bundle.js`);
+    expect(checker.errors[0].source.absolutePath).toBe(
+      join(dir, 'original.js'),
+    );
 
     const filtered = new CheckSyntax({
-      ecmaVersion: 5,
-      excludeErrorMessage: /Module sourceType requires ecmaVersion/,
+      ecmaVersion: 2019,
+      excludeErrorMessage: /Unexpected token/,
     });
-    await filtered.check(filepath, 'var value = 1;', {
+    await filtered.check(filepath, code, {
       sourceType: 'module',
     });
     expect(filtered.errors).toHaveLength(0);
