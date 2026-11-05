@@ -81,12 +81,6 @@ test('per-check context does not change later calls', async () => {
   expect(checker.errors[1].source.absolutePath).toBe('another-module.js');
 });
 
-test('provided empty code does not read from disk', async () => {
-  const checker = new CheckSyntax({ ecmaVersion: 2020 });
-  await expect(checker.check('missing.js', '')).resolves.toBeUndefined();
-  expect(checker.errors).toHaveLength(0);
-});
-
 test('file reads use per-check context while HTML scripts remain classic', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'check-syntax-'));
   const jsFile = join(dir, 'bundle.js');

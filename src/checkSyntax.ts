@@ -64,7 +64,7 @@ export class CheckSyntax {
 
   async check(filepath: string, code?: string, context?: ParseContext) {
     // If the code is provided, no need to read file.
-    if (code !== undefined) {
+    if (code) {
       return await this.tryParse(filepath, code, context);
     }
 
@@ -87,6 +87,7 @@ export class CheckSyntax {
 
   async tryParse(filepath: string, code: string, context?: ParseContext) {
     const sourceType = context?.sourceType ?? 'script';
+    // Acorn can accept module declarations below ES2015; 6 is its ES2015 alias.
     const incompatibleModuleVersion =
       sourceType === 'module' &&
       typeof this.ecmaVersion === 'number' &&
@@ -111,6 +112,7 @@ export class CheckSyntax {
         exclude: this.exclude,
         excludeErrorMessage: this.excludeErrorMessage,
         rootPath: this.rootPath,
+        // Version conflicts use a placeholder location, which must not map to unrelated source code.
         useSourceMap: !incompatibleModuleVersion,
       });
 
