@@ -179,8 +179,6 @@ await checker.check('module.js', 'export const value = 1;', {
 });
 ```
 
-The plugin does not infer the mode from `.mjs`/`.cjs` extensions. HTML inline scripts retain their existing behavior: only classic scripts are checked; `<script type="module">` is not checked yet.
-
 ### exclude
 
 - **Type:**
