@@ -20,16 +20,13 @@ export class CheckSyntaxRspackPlugin extends CheckSyntax {
       CheckSyntaxRspackPlugin.name,
       async (compilation: Compilation) => {
         const outputPath = compilation.outputOptions.path || 'dist';
-        const chunkFiles = new Set(
-          [...compilation.chunks].flatMap((chunk) => [...chunk.files]),
-        );
 
         // not support compilation.emittedAssets in Rspack
         const files = compilation
           .getAssets()
           .filter((a) => a.source)
-          .map(({ name }) => ({
-            name,
+          .map(({ name, info }) => ({
+            info,
             // Remove the query only when resolving the file on disk.
             filepath: resolve(outputPath, name.split('?')[0]),
           }))
@@ -39,12 +36,9 @@ export class CheckSyntaxRspackPlugin extends CheckSyntax {
               !isExcluded(filepath, this.excludeOutput),
           );
         await Promise.all(
-          files.map(async ({ name, filepath }) => {
+          files.map(async ({ info, filepath }) => {
             await this.check(filepath, undefined, {
-              sourceType:
-                compilation.outputOptions.module && chunkFiles.has(name)
-                  ? 'module'
-                  : 'script',
+              sourceType: info.javascriptModule === true ? 'module' : 'script',
             });
           }),
         );

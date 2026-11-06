@@ -9,7 +9,7 @@ import { CheckSyntaxRspackPlugin } from '../../dist';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-test('checks module chunks and copied classic scripts in their own modes', async () => {
+test('checks module assets and copied classic scripts in their own modes', async () => {
   const checker = new CheckSyntaxRspackPlugin({ ecmaVersion: 2022 });
   const compiler = rspack({
     context: __dirname,
@@ -23,6 +23,15 @@ test('checks module chunks and copied classic scripts in their own modes', async
     },
     optimization: { minimize: false },
     plugins: [
+      (compiler) => {
+        compiler.hooks.thisCompilation.tap('emitModuleAsset', (compilation) => {
+          compilation.emitAsset(
+            'metadata-module.js',
+            new rspack.sources.RawSource('export var value = 1;'),
+            { javascriptModule: true },
+          );
+        });
+      },
       new rspack.CopyRspackPlugin({
         patterns: [
           {
