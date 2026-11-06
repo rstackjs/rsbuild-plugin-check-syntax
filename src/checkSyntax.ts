@@ -9,6 +9,7 @@ import type {
   CheckSyntaxExclude,
   ECMASyntaxError,
   EcmaVersion,
+  ParseContext,
   SyntaxErrorKey,
 } from './types.js';
 import { isExcluded } from './utils.js';
@@ -54,7 +55,6 @@ export class CheckSyntax {
 
     this.targets = targets;
     this.ecmaVersion = ecmaVersion || browserslistToESVersion(targets);
-
     this.exclude = options.exclude;
     this.excludeErrorMessage = options.excludeErrorMessage;
     this.excludeOutput = options.excludeOutput;
@@ -62,10 +62,10 @@ export class CheckSyntax {
     this.excludeErrorLogs = options.excludeErrorLogs || [];
   }
 
-  async check(filepath: string, code?: string) {
+  async check(filepath: string, code?: string, context?: ParseContext) {
     // If the code is provided, no need to read file.
     if (code) {
-      return await this.tryParse(filepath, code);
+      return await this.tryParse(filepath, code, context);
     }
 
     if (HTML_REGEX.test(filepath)) {
@@ -73,7 +73,7 @@ export class CheckSyntax {
       await Promise.all(
         htmlScripts.map(async (script) => {
           if (!isExcluded(filepath, this.exclude)) {
-            await this.tryParse(filepath, script);
+            await this.tryParse(filepath, script, { sourceType: 'script' });
           }
         }),
       );
@@ -81,13 +81,14 @@ export class CheckSyntax {
 
     if (JS_REGEX.test(filepath)) {
       const jsScript = await fs.promises.readFile(filepath, 'utf-8');
-      await this.tryParse(filepath, jsScript);
+      await this.tryParse(filepath, jsScript, context);
     }
   }
 
-  async tryParse(filepath: string, code: string) {
+  async tryParse(filepath: string, code: string, context?: ParseContext) {
+    const sourceType = context?.sourceType ?? 'script';
     try {
-      parse(code, { ecmaVersion: this.ecmaVersion });
+      parse(code, { ecmaVersion: this.ecmaVersion, sourceType });
     } catch (_: unknown) {
       const err = _ as AcornParseError;
 

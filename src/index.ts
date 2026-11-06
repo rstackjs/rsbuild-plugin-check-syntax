@@ -3,6 +3,7 @@ import { CheckSyntaxRspackPlugin } from './CheckSyntaxPlugin.js';
 import type { CheckSyntaxOptions } from './types.js';
 
 export type PluginCheckSyntaxOptions = CheckSyntaxOptions;
+export type { ParseContext, SourceType } from './types.js';
 
 export const PLUGIN_CHECK_SYNTAX_NAME = 'rsbuild:check-syntax';
 

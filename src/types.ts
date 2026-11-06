@@ -2,6 +2,12 @@ import type { ecmaVersion as EcmaVersion } from 'acorn';
 
 export type { EcmaVersion };
 
+export type SourceType = 'script' | 'module';
+
+export interface ParseContext {
+  sourceType?: SourceType;
+}
+
 export type Condition = string | RegExp | ((filepath: string) => boolean);
 
 export type CheckSyntaxExclude = Condition | Condition[];

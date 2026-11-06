@@ -8,6 +8,23 @@ import { pluginCheckSyntax } from '../../src';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+test('detects module output from the Rsbuild config', async () => {
+  const rsbuild = await createRsbuild({
+    cwd: __dirname,
+    rsbuildConfig: {
+      ...(await loadConfig({ cwd: __dirname })).content,
+      source: { entry: { index: './src/test.js' } },
+      output: {
+        module: true,
+      },
+      tools: { rspack: { output: { library: { type: 'module' } } } },
+      plugins: [pluginCheckSyntax({ ecmaVersion: 2015 })],
+    },
+  });
+
+  await expect(rsbuild.build()).resolves.toBeTruthy();
+});
+
 test('should throw error when exist syntax errors', async () => {
   const { logs, restore } = proxyConsole();
 

@@ -1,5 +1,6 @@
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 import { rspack } from '@rspack/core';
 import { proxyConsole, toPosixPath } from '@rstackjs/test-utils';
 import { expect, test } from 'rstack/test';
@@ -7,6 +8,59 @@ import stripAnsi from 'strip-ansi';
 import { CheckSyntaxRspackPlugin } from '../../dist';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+test('checks module assets and copied classic scripts in their own modes', async () => {
+  const checker = new CheckSyntaxRspackPlugin({ ecmaVersion: 2022 });
+  const compiler = rspack({
+    context: __dirname,
+    entry: './src/test.js',
+    mode: 'production',
+    output: {
+      path: path.join(__dirname, 'dist'),
+      module: true,
+      library: { type: 'module' },
+      filename: 'bundle.js?test=module',
+    },
+    optimization: { minimize: false },
+    plugins: [
+      (compiler) => {
+        compiler.hooks.thisCompilation.tap('emitModuleAsset', (compilation) => {
+          compilation.emitAsset(
+            'metadata-module.js',
+            new rspack.sources.RawSource('export var value = 1;'),
+            { javascriptModule: true },
+          );
+        });
+      },
+      new rspack.CopyRspackPlugin({
+        patterns: [
+          {
+            from: './src/test.js',
+            to: 'classic.js',
+            transform: () => 'function legacy(a, a) { return a; }',
+          },
+          {
+            from: './src/test.js',
+            to: 'invalid.js',
+            transform: () => 'await Promise.resolve();',
+          },
+        ],
+      }),
+      checker,
+    ],
+  });
+
+  try {
+    await expect(promisify(compiler.run.bind(compiler))()).rejects.toThrowError(
+      '[@rsbuild/plugin-check-syntax]',
+    );
+    expect(checker.errors.map((error) => error.source.absolutePath)).toEqual([
+      path.join(__dirname, 'dist/invalid.js'),
+    ]);
+  } finally {
+    await promisify(compiler.close.bind(compiler))();
+  }
+});
 
 test('should throw error when exist syntax errors', async () => {
   const { logs, restore } = proxyConsole();

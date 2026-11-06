@@ -164,6 +164,21 @@ pluginCheckSyntax({
 
 At this time, the build artifacts can include all syntax supported by ES2020, such as optional chaining.
 
+### Module output
+
+When Rspack's `output.module` is `true`, the plugin parses JavaScript chunk files as ES modules. Other JavaScript assets, including copied files, are parsed as classic scripts.
+
+When using `CheckSyntax` directly, there is no compilation configuration to inspect. Pass the mode for a module resource in the per-check context:
+
+```ts
+import { CheckSyntax } from '@rsbuild/plugin-check-syntax';
+
+const checker = new CheckSyntax({ ecmaVersion: 2020 });
+await checker.check('module.js', 'export const value = 1;', {
+  sourceType: 'module',
+});
+```
+
 ### exclude
 
 - **Type:**
