@@ -1,6 +1,6 @@
 {
   "name": "@rsbuild/plugin-check-syntax",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "repository": "https://github.com/rstackjs/rsbuild-plugin-check-syntax",
   "homepage": "https://github.com/rstackjs/rsbuild-plugin-check-syntax#readme",
   "bugs": {
