@@ -38,13 +38,13 @@
     "source-map": "^0.8.0"
   },
   "devDependencies": {
-    "@rsbuild/core": "2.2.13",
-    "@rspack/cli": "^2.2.9",
-    "@rspack/core": "^2.2.9",
+    "@rsbuild/core": "2.3.2",
+    "@rspack/cli": "^2.3.2",
+    "@rspack/core": "^2.3.2",
     "@rstackjs/test-utils": "^1.0.0",
     "@types/node": "^24.19.2",
     "rslog": "^2.3.0",
-    "rstack": "^0.8.3",
+    "rstack": "^0.9.1",
     "strip-ansi": "^7.2.0",
     "typescript": "7.0.2"
   },
@@ -56,7 +56,7 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@12.11.2",
+  "packageManager": "pnpm@12.18.0",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
